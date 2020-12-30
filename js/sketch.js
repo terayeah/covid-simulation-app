@@ -1,10 +1,14 @@
 let people = [];
+let r = 22;
+let maxDensity;
 
 function setup() {
+    maxDensity = windowWidth/(r*2) * windowHeight/(r*2)
     createCanvas(windowWidth, windowHeight);
-    for(var i = 0; i < 20; i++){
-        people.push(new Person(random(windowWidth), random(windowHeight)));
+    for(var i = 0; i < maxDensity; i++){
+        people.push(new Person(random(r, windowWidth-r), random(r, windowHeight-r), r, false));
     }
+    people[0].isInfe = true;
 }
 
 function draw() {
@@ -19,8 +23,8 @@ function draw() {
             }
             let loc = people[j].location.copy();
             let distance = loc.sub(people[i].location).mag();
-            if (distance < people[i].r){
-                people[i].c = color(255, 0, 0);
+            if (distance < people[i].r && !people[i].isInfe && people[j].isInfe){
+                people[i].isInfe = true;
             }
         }
         people[i].display();
@@ -32,32 +36,36 @@ function draw() {
 //////////////////////////////////
 
 class Person{
-    constructor(x, y){
+    constructor(x, y, radius, isInfected){
         let location;
         let velocity;
         let acceleration;
         let r;
+        let isInfe;
         let c;
         let maxspeed;
         let maxforce;
-        let boost;
 
         this.acceleration = createVector(random(-1, 1), random(-1, 1));
         this.velocity = createVector(0, 0);
         this.location = createVector(x, y);
-        this.r = 20;
-        this.c = color(255, 255, 255);
+        this.r = radius;
+        this.isInfe = isInfected;
+        this.isInfe ? this.c = color(255, 0, 0) : this.c = color(255, 255, 255);
         this.maxspeed = 2;
         this.maxforce = 0.1;
         this.boost = 1.5;
     }
 
     update(){
-        this.velocity.normalize().mult(this.boost);
+        this.velocity.normalize();
         this.velocity.add(this.acceleration);
         this.velocity.limit(this.maxspeed);
         this.location.add(this.velocity);
         this.acceleration.mult(0);
+        if (this.isInfe){
+            this.c = color(255, 0, 0);
+        }
     }
 
     bounce(){
