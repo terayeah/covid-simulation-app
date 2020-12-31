@@ -1,11 +1,13 @@
-//////////////////////////////////
-////////////Auguments/////////////
-//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////Auguments//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 let people = [];
 let locs = [];
 let r = 20;
-let density;
+let density = 200;
 let maxDensity = 500;
 let field;
 let infoField;
@@ -19,16 +21,18 @@ let frame = {
     max:300
 };
 let params = {
-    InfectionRate: 100,
-    CaseFatalityRate: 100,
-    MoveRate: 100,
-    IncubationFrame: 150,
-    OnsetFrame: 300
+    InfectionRate: 50, //感染率
+    CaseFatalityRate: 100, //致死率
+    MoveRate: 100, //移動率
+    IncubationFrame: 150, //潜伏期間
+    OnsetFrame: 300 //発症期間
 }
 
-//////////////////////////////////
-//////////Main Functions//////////
-//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////Main Functions///////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 function setup() {
     setupData();
@@ -61,7 +65,8 @@ function draw() {
             let distance = loc.sub(people[i].location).mag();
             if (distance <= people[i].r){
                 people[i].velocity.mult(-1);
-                if (!people[i].status.isInfection && people[j].status.isInfection && getRate(people[i].params.InfectionRate)){
+                if (!people[i].status.isInfection && people[j].status.isInfection
+                    && getRate(people[i].params.InfectionRate)){
                     people[i].status.isInfection = true;
                 }
                 break;
@@ -79,14 +84,15 @@ function draw() {
     frame.count++;
 }
 
-//////////////////////////////////
-//////////Util Functions//////////
-//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////Util Functions///////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 function setupData(){
     infoField = {w: windowWidth, h:200}
     field = {w: windowWidth, h:windowHeight-infoField.h, offset:10}
-    density = 100
 }
 
 function initPeople(){
@@ -95,7 +101,9 @@ function initPeople(){
     locs = [];
     let isOk = true;
     for(let i = 0; i < density; i++){
-        let loc = createVector(random(field.offset + r, field.w - r), random(field.offset + r, field.h - r));
+        let loc = createVector(
+            random(field.offset + r, field.w - r),random(field.offset + r, field.h - r)
+        );
         for (let j = 0; j < locs.length; j++){
             let tmp = loc.copy();
             if (tmp.sub(locs[j]).mag() <= r*1.5){
@@ -114,6 +122,9 @@ function initPeople(){
         people.push(new Person(locs[i].x, locs[i].y, r));
     }
     people[0].status.isInfection = true;
+    for(let i = 0; i < people.length; i++){
+        people[i].setParams(params);
+    }
 }
 
 function drawStroke(x, y, w, h){
@@ -154,9 +165,11 @@ function onRestartButtonPressed(){
     isReset = !isReset;
 }
 
-//////////////////////////////////
-///////////Person Class///////////
-//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////Person Class////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 class Person{
     constructor(x, y, radius){
@@ -167,7 +180,6 @@ class Person{
         let status;
         let c;
         let maxspeed;
-        let maxforce;
         let params;
 
         this.acceleration = createVector(random(-1, 1), random(-1, 1));
@@ -179,9 +191,8 @@ class Person{
         }
         this.c = color(255, 255, 255);
         this.maxspeed = 2;
-        this.maxforce = 0.1;
         this.params = {
-            InfectionRate: 0,
+            InfectionRate: 100,
             CaseFatalityRate: 100,
             MoveRate: 100,
             IncubationFrame: 150,
@@ -189,13 +200,13 @@ class Person{
         };
     }
 
-    setParams(params){
+    setParams(p){
         this.params = p;
     }
 
     update(){
         this.velocity.normalize();
-        this.velocity.add(this.acceleration);
+        this.velocity.add(this.acceleration).mult(2);
         this.velocity.limit(this.maxspeed);
         this.location.add(this.velocity);
         this.acceleration.mult(0);
