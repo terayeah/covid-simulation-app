@@ -7,7 +7,6 @@
 let people = [];
 let locs = [];
 let r = 20;
-let maxDensity = 500;
 let field;
 let infoField;
 let actionButton;
@@ -27,6 +26,14 @@ let params = {
     IncubationFrame: 150, //潜伏期間
     OnsetFrame: 300 //発症期間
 }
+let Sliders = {
+    densitySlider: {},
+    InfectionRateSlider: {},
+    CaseFatalityRateSlider: {},
+    MoveRateSlider: {},
+    IncubationFrameSlider: {},
+    OnsetFrameSlider: {}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -40,6 +47,26 @@ function setup() {
     frameRate(frame.rate);
     initPeople();
     setButtons(actionButton, restartButton);
+    let dist = 190;
+    Sliders.densitySlider = createSlider(0, 500, params.density);
+    Sliders.densitySlider.position(100, field.h + 80);
+    Sliders.densitySlider.style('width', '120px');
+    Sliders.InfectionRateSlider = createSlider(0, 100, params.InfectionRate);
+    Sliders.InfectionRateSlider.position(dist + 100, field.h + 80);
+    Sliders.InfectionRateSlider.style('width', '120px');
+    Sliders.CaseFatalityRateSlider = createSlider(0, 100, params.CaseFatalityRate);
+    Sliders.CaseFatalityRateSlider.position(dist*2 + 100, field.h + 80);
+    Sliders.CaseFatalityRateSlider.style('width', '120px');
+    Sliders.MoveRateSlider = createSlider(0, 100, params.MoveRate);
+    Sliders.MoveRateSlider.position(dist*3 + 100, field.h + 80);
+    Sliders.MoveRateSlider.style('width', '120px');
+    Sliders.IncubationFrameSlider = createSlider(0, frame.max, params.IncubationFrame);
+    Sliders.IncubationFrameSlider.position(dist*4 + 100, field.h + 80);
+    Sliders.IncubationFrameSlider.style('width', '120px');
+    Sliders.OnsetFrameSlider = createSlider(0, frame.max, params.OnsetFrame);
+    Sliders.OnsetFrameSlider.position(dist*5 + 100, field.h + 80);
+    Sliders.OnsetFrameSlider.style('width', '120px');
+
 }
 
 function draw() {
@@ -54,6 +81,25 @@ function draw() {
     fill(255)
     textSize(15);
     text(`${frame.count}/${frame.max}`, 0, 0);
+    pop();
+    push();
+    translate(100, field.h + 80);
+    noStroke();
+    fill(255)
+    textSize(15);
+    let dist = 190;
+    text(`density`, 60, -20);
+    text(`${params.density}/500`, 120, 50);
+    text(`infectionRate`, dist + 100, -20);
+    text(`${params.InfectionRate}/100`, dist + 120, 50);
+    text(`CaseFatalityRate`, dist*2 + 120, -20);
+    text(`${params.CaseFatalityRate}/100`, dist*2 + 120, 50);
+    text(`MoveRate`, dist*3 + 80, -20);
+    text(`${params.MoveRate}/100`, dist*3 + 120, 50);
+    text(`IncubationFrame`, dist*4 + 120, -20);
+    text(`${params.IncubationFrame}/${frame.max}`, dist*4 + 120, 50);
+    text(`OnsetFrame`, dist*5 + 90, -20);
+    text(`${params.OnsetFrame}/${frame.max}`, dist*5 + 120, 50);
     pop();
 
     if (isReset){
@@ -141,11 +187,11 @@ function drawStroke(x, y, w, h){
 function setButtons(actionButton, restartButton){
     actionButton = createButton('pause');
     actionButton.id('actionButton');
-    actionButton.position(field.w - 200, field.h + field.offset * 3);
+    actionButton.position(field.w - 200, field.h + field.offset * 6);
     actionButton.mousePressed(()=>onActionButtonPressed());
     restartButton = createButton('restart');
     restartButton.id('restartButton');
-    restartButton.position(field.w - 200, field.h + field.offset * 7);
+    restartButton.position(field.w - 200, field.h + field.offset * 10);
     restartButton.mousePressed(()=>onRestartButtonPressed(isReset));
 }
 
