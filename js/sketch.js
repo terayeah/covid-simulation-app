@@ -108,23 +108,24 @@ function setupData(){
 
 function createSliders(){
     let dist = 190;
+    let offset = 80;
     Sliders.densitySlider = createSlider(0, 500, params.density);
-    Sliders.densitySlider.position(100, field.h + 80);
+    Sliders.densitySlider.position(offset, field.h + 80);
     Sliders.densitySlider.style('width', '120px');
     Sliders.InfectionRateSlider = createSlider(0, 100, params.InfectionRate);
-    Sliders.InfectionRateSlider.position(dist + 100, field.h + 80);
+    Sliders.InfectionRateSlider.position(dist + offset, field.h + 80);
     Sliders.InfectionRateSlider.style('width', '120px');
     Sliders.CaseFatalityRateSlider = createSlider(0, 100, params.CaseFatalityRate);
-    Sliders.CaseFatalityRateSlider.position(dist*2 + 100, field.h + 80);
+    Sliders.CaseFatalityRateSlider.position(dist*2 + offset, field.h + 80);
     Sliders.CaseFatalityRateSlider.style('width', '120px');
     Sliders.MoveRateSlider = createSlider(0, 100, params.MoveRate);
-    Sliders.MoveRateSlider.position(dist*3 + 100, field.h + 80);
+    Sliders.MoveRateSlider.position(dist*3 + offset, field.h + 80);
     Sliders.MoveRateSlider.style('width', '120px');
     Sliders.IncubationFrameSlider = createSlider(0, frame.max, params.IncubationFrame);
-    Sliders.IncubationFrameSlider.position(dist*4 + 100, field.h + 80);
+    Sliders.IncubationFrameSlider.position(dist*4 + offset, field.h + 80);
     Sliders.IncubationFrameSlider.style('width', '120px');
     Sliders.OnsetFrameSlider = createSlider(0, frame.max, params.OnsetFrame);
-    Sliders.OnsetFrameSlider.position(dist*5 + 100, field.h + 80);
+    Sliders.OnsetFrameSlider.position(dist*5 + offset, field.h + 80);
     Sliders.OnsetFrameSlider.style('width', '120px');
 }
 
@@ -146,7 +147,7 @@ function setText(){
     text(`${frame.count}/${frame.max}`, 0, 0);
     pop();
     push();
-    translate(100, field.h + 80);
+    translate(80, field.h + 80);
     noStroke();
     fill(255)
     textSize(15);
@@ -210,11 +211,11 @@ function drawStroke(x, y, w, h){
 function setButtons(actionButton, restartButton){
     actionButton = createButton('pause');
     actionButton.id('actionButton');
-    actionButton.position(field.w - 200, field.h + field.offset * 6);
+    actionButton.position(field.w - 220, field.h + field.offset * 6);
     actionButton.mousePressed(()=>onActionButtonPressed());
     restartButton = createButton('restart');
     restartButton.id('restartButton');
-    restartButton.position(field.w - 200, field.h + field.offset * 10);
+    restartButton.position(field.w - 220, field.h + field.offset * 10);
     restartButton.mousePressed(()=>onRestartButtonPressed(isReset));
 }
 
