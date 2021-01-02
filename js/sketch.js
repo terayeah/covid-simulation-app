@@ -58,6 +58,7 @@ function draw() {
     }
     for(let i = 0; i < people.length; i++){
         people[i].update();
+        people[i].bounce(field);
         people[i].updateFlag(params.IncubationFrame, params.OnsetFrame);
         for(let j = 0; j < people.length; j++){
             if (j == i){
@@ -71,7 +72,6 @@ function draw() {
                 break;
             }
         }
-        people[i].bounce(field);
         people[i].display();
     }
     frame.count++;
@@ -270,11 +270,25 @@ class Person{
 
     bounce(f){
         var offset = (f.offset + this.r * 0.5) * 1.1;
-        if((this.location.x >= f.w - offset) || (this.location.x <= offset)){
-          this.velocity.x *= -1;
+        //if((this.location.x >= f.w - offset) || (this.location.x <= offset)){
+        //  this.velocity.x *= -1;
+        //}
+        //if((this.location.y >= f.h - offset) || (this.location.y <= offset)){
+        //  this.velocity.y *= -1;
+        //}
+        if(this.location.x >= f.w - offset){
+            this.location.x -= 1;
+            this.velocity.x *= -1;
+        }else if (this.location.x <= offset){
+            this.location.x += 1;
+            this.velocity.x *= -1;
         }
-        if((this.location.y >= f.h - offset) || (this.location.y <= offset)){
-          this.velocity.y *= -1;
+        if(this.location.y >= f.h - offset){
+            this.location.y -= 1;
+            this.velocity.y *= -1;
+        }else if (this.location.y <= offset){
+            this.location.y += 1;
+            this.velocity.y *= -1;
         }
     }
 
