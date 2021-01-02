@@ -23,7 +23,7 @@ let frame = {
 let params = {
     InfectionRate: 50, //感染率
     CaseFatalityRate: 50, //致死率
-    MoveRate: 100, //移動率
+    MoveRate: 40, //移動率
     IncubationFrame: 150, //潜伏期間
     OnsetFrame: 300 //発症期間
 }
@@ -118,7 +118,7 @@ function initPeople(){
         }
     }
     for(let i = 0; i < locs.length; i++){
-        people.push(new Person(locs[i].x, locs[i].y, r));
+        people.push(new Person(locs[i].x, locs[i].y, r, params.MoveRate));
     }
     people[0].infect(params.IncubationFrame);
     for(let i = 0; i < people.length; i++){
@@ -166,7 +166,7 @@ function onRestartButtonPressed(){
 ////////////////////////////////////////////////////////////////////////////////////
 
 class Person{
-    constructor(x, y, radius){
+    constructor(x, y, radius, moveRate){
         let location;
         let velocity;
         let acceleration;
@@ -202,10 +202,12 @@ class Person{
         };
         this.f = 0;
         this.flag = {
+            isStop: this.getRate(moveRate),
             isInfection: false,
             isDead: false,
             isAntiBody: false
         }
+        console.log(this.flag.isStop)
     }
 
     setParams(p){
@@ -234,7 +236,7 @@ class Person{
     }
 
     update(){
-        if (this.flag.isDead){
+        if (this.flag.isDead || this.flag.isStop){
             this.velocity.mult(0);
             return;
         }
