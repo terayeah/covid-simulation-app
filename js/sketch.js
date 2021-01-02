@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+const keyParams = 'Params';
 let people = [];
 let count = {
     notInfectedPeople: 0,
@@ -109,6 +110,11 @@ function setupData(){
     infoField = {w: windowWidth, h:200}
     field = {w: windowWidth, h:windowHeight-infoField.h, offset:10}
     textAlign(RIGHT);
+    let val = localStorage.getItem(keyParams);
+    if (val){
+        let valObj = JSON.parse(val);
+        params = valObj;
+    }
 }
 
 function createSliders(){
@@ -213,6 +219,8 @@ function initPeople(){
     for(let i = 0; i < people.length; i++){
         people[i].setParams(params);
     }
+    var paramsJson = JSON.stringify(params);
+    localStorage.setItem(keyParams, paramsJson);
 }
 
 function calcCount(nInfe, infe, dead){
