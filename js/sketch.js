@@ -5,6 +5,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 let people = [];
+let count = {
+    notInfectedPeople: 0,
+    infectedPeople: 0,
+    deadPeople: 0
+}
 let locs = [];
 let r = 20;
 let field;
@@ -22,7 +27,7 @@ let params = {
     density: 200,
     InfectionRate: 50, //感染率
     CaseFatalityRate: 50, //致死率
-    MoveRate: 40, //移動率
+    MoveRate: 80, //移動率
     IncubationFrame: 150, //潜伏期間
     IncubationFrameCopy: 150,
     OnsetFrame: 300, //発症期間
@@ -70,7 +75,7 @@ function draw() {
     for(let i = 0; i < people.length; i++){
         people[i].update();
         people[i].bounce(field);
-        people[i].updateFlag(params.IncubationFrameCopy, params.OnsetFrameCopy);
+        people[i].updateFlag(params.IncubationFrameCopy, params.OnsetFrameCopy, calcCount);
         for(let j = 0; j < people.length; j++){
             if (j == i){
                 continue;
@@ -79,7 +84,7 @@ function draw() {
             let distance = loc.sub(people[i].location).mag();
             if (distance <= people[i].r * 1.1){
                 people[i].velocity.mult(-1);
-                people[i].contact(people[j].flag.isInfection);
+                people[i].contact(people[j].flag.isInfection, calcCount);
                 break;
             }
         }
@@ -108,24 +113,25 @@ function setupData(){
 
 function createSliders(){
     let dist = 190;
-    let offset = 80;
+    let offset = 50;
+    let hoffset = 90;
     Sliders.densitySlider = createSlider(0, 500, params.density);
-    Sliders.densitySlider.position(offset, field.h + 80);
+    Sliders.densitySlider.position(offset, field.h + hoffset);
     Sliders.densitySlider.style('width', '120px');
     Sliders.InfectionRateSlider = createSlider(0, 100, params.InfectionRate);
-    Sliders.InfectionRateSlider.position(dist + offset, field.h + 80);
+    Sliders.InfectionRateSlider.position(dist + offset, field.h + hoffset);
     Sliders.InfectionRateSlider.style('width', '120px');
     Sliders.CaseFatalityRateSlider = createSlider(0, 100, params.CaseFatalityRate);
-    Sliders.CaseFatalityRateSlider.position(dist*2 + offset, field.h + 80);
+    Sliders.CaseFatalityRateSlider.position(dist*2 + offset, field.h + hoffset);
     Sliders.CaseFatalityRateSlider.style('width', '120px');
     Sliders.MoveRateSlider = createSlider(0, 100, params.MoveRate);
-    Sliders.MoveRateSlider.position(dist*3 + offset, field.h + 80);
+    Sliders.MoveRateSlider.position(dist*3 + offset, field.h + hoffset);
     Sliders.MoveRateSlider.style('width', '120px');
     Sliders.IncubationFrameSlider = createSlider(0, frame.max, params.IncubationFrame);
-    Sliders.IncubationFrameSlider.position(dist*4 + offset, field.h + 80);
+    Sliders.IncubationFrameSlider.position(dist*4 + offset, field.h + hoffset);
     Sliders.IncubationFrameSlider.style('width', '120px');
     Sliders.OnsetFrameSlider = createSlider(0, frame.max, params.OnsetFrame);
-    Sliders.OnsetFrameSlider.position(dist*5 + offset, field.h + 80);
+    Sliders.OnsetFrameSlider.position(dist*5 + offset, field.h + hoffset);
     Sliders.OnsetFrameSlider.style('width', '120px');
 }
 
@@ -143,27 +149,31 @@ function setText(){
     translate(infoField.w - 40, field.h + infoField.h - 40);
     noStroke();
     fill(255)
+    textSize(13);
+    text(`not infected: ${count.notInfectedPeople} ${getPerc(count.notInfectedPeople, people.length)}%`, 0, -90);
+    text(`infected: ${count.infectedPeople} ${getPerc(count.infectedPeople, people.length)}%`, 0, -65);
+    text(`dead: ${count.deadPeople} ${getPerc(count.deadPeople, people.length)}%`, 0, -40);
     textSize(15);
     text(`${frame.count}/${frame.max}`, 0, 0);
     pop();
     push();
-    translate(80, field.h + 80);
+    translate(50, field.h + 80);
     noStroke();
     fill(255)
     textSize(15);
     let dist = 190;
-    text(`density`, 60, -20);
-    text(`${params.density}/500`, 120, 50);
-    text(`infectionRate`, dist + 100, -20);
-    text(`${params.InfectionRate}/100`, dist + 120, 50);
-    text(`CaseFatalityRate`, dist*2 + 120, -20);
-    text(`${params.CaseFatalityRate}/100`, dist*2 + 120, 50);
-    text(`MoveRate`, dist*3 + 80, -20);
-    text(`${params.MoveRate}/100`, dist*3 + 120, 50);
-    text(`IncubationFrame`, dist*4 + 120, -20);
-    text(`${params.IncubationFrame}/${frame.max}`, dist*4 + 120, 50);
-    text(`OnsetFrame`, dist*5 + 90, -20);
-    text(`${params.OnsetFrame}/${frame.max}`, dist*5 + 120, 50);
+    text(`density`, 60, -10);
+    text(`${params.density}/500`, 120, 60);
+    text(`infectionRate`, dist + 100, -10);
+    text(`${params.InfectionRate}/100`, dist + 120, 60);
+    text(`CaseFatalityRate`, dist*2 + 120, -10);
+    text(`${params.CaseFatalityRate}/100`, dist*2 + 120, 60);
+    text(`MoveRate`, dist*3 + 80, -10);
+    text(`${params.MoveRate}/100`, dist*3 + 120, 60);
+    text(`IncubationFrame`, dist*4 + 120, -10);
+    text(`${params.IncubationFrame}/${frame.max}`, dist*4 + 120, 60);
+    text(`OnsetFrame`, dist*5 + 90, -10);
+    text(`${params.OnsetFrame}/${frame.max}`, dist*5 + 120, 60);
     pop();
 }
 
@@ -172,6 +182,9 @@ function initPeople(){
     params.OnsetFrameCopy= params.OnsetFrame;
     // 重ならないようにrandomに配置する
     people = [];
+    count.notInfectedPeople = params.density;
+    count.infectedPeople = 0;
+    count.deadPeople = 0;
     locs = [];
     let isOk = true;
     for(let i = 0; i < params.density; i++){
@@ -196,9 +209,20 @@ function initPeople(){
         people.push(new Person(locs[i].x, locs[i].y, r, params.MoveRate));
     }
     people[0].infect(params.IncubationFrame);
+    calcCount(-1, 1, 0);
     for(let i = 0; i < people.length; i++){
         people[i].setParams(params);
     }
+}
+
+function calcCount(nInfe, infe, dead){
+    count.notInfectedPeople += nInfe;
+    count.infectedPeople += infe;
+    count.deadPeople += dead;
+}
+
+function getPerc(child, parent){
+    return Math.round(child / parent * 100 * 10) / 10;
 }
 
 function drawStroke(x, y, w, h){
@@ -211,11 +235,11 @@ function drawStroke(x, y, w, h){
 function setButtons(actionButton, restartButton){
     actionButton = createButton('pause');
     actionButton.id('actionButton');
-    actionButton.position(field.w - 220, field.h + field.offset * 6);
+    actionButton.position(field.w - 280, field.h + field.offset * 6);
     actionButton.mousePressed(()=>onActionButtonPressed());
     restartButton = createButton('restart');
     restartButton.id('restartButton');
-    restartButton.position(field.w - 220, field.h + field.offset * 10);
+    restartButton.position(field.w - 280, field.h + field.offset * 12);
     restartButton.mousePressed(()=>onRestartButtonPressed(isReset));
 }
 
@@ -294,9 +318,10 @@ class Person{
         this.sc = sc;
     }
 
-    contact(other){
+    contact(other, calcCount){
         if (!this.flag.isAntiBody && !this.flag.isInfection && other && this.getRate(this.params.InfectionRate)){
             this.flag.isInfection = true;
+            calcCount(-1, 1, 0);
         }
     }
 
@@ -322,7 +347,7 @@ class Person{
         this.acceleration.mult(0);
     }
 
-    updateFlag(incuEnd, deadLine){
+    updateFlag(incuEnd, deadLine, calcCount){
         if (this.flag.isDead || !this.flag.isInfection) return;
         this.f++;
         // 潜伏
@@ -336,10 +361,12 @@ class Person{
                 // 死
                 this.setColor(this.colors.dead, this.colors.dead)
                 this.flag.isDead = true;
+                calcCount(0, -1, 1);
             }else{
                 // 復活
                 this.setColor(this.colors.normal, this.colors.anti)
                 this.flag.isAntiBody = true;
+                calcCount(1, -1, 0);
             }
             this.flag.isInfection = false;
         }
