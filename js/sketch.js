@@ -47,60 +47,17 @@ function setup() {
     frameRate(frame.rate);
     initPeople();
     setButtons(actionButton, restartButton);
-    let dist = 190;
-    Sliders.densitySlider = createSlider(0, 500, params.density);
-    Sliders.densitySlider.position(100, field.h + 80);
-    Sliders.densitySlider.style('width', '120px');
-    Sliders.InfectionRateSlider = createSlider(0, 100, params.InfectionRate);
-    Sliders.InfectionRateSlider.position(dist + 100, field.h + 80);
-    Sliders.InfectionRateSlider.style('width', '120px');
-    Sliders.CaseFatalityRateSlider = createSlider(0, 100, params.CaseFatalityRate);
-    Sliders.CaseFatalityRateSlider.position(dist*2 + 100, field.h + 80);
-    Sliders.CaseFatalityRateSlider.style('width', '120px');
-    Sliders.MoveRateSlider = createSlider(0, 100, params.MoveRate);
-    Sliders.MoveRateSlider.position(dist*3 + 100, field.h + 80);
-    Sliders.MoveRateSlider.style('width', '120px');
-    Sliders.IncubationFrameSlider = createSlider(0, frame.max, params.IncubationFrame);
-    Sliders.IncubationFrameSlider.position(dist*4 + 100, field.h + 80);
-    Sliders.IncubationFrameSlider.style('width', '120px');
-    Sliders.OnsetFrameSlider = createSlider(0, frame.max, params.OnsetFrame);
-    Sliders.OnsetFrameSlider.position(dist*5 + 100, field.h + 80);
-    Sliders.OnsetFrameSlider.style('width', '120px');
-
+    createSliders();
 }
 
 function draw() {
     background(0);
-    strokeWeight(3);
     drawStroke(field.offset, field.offset, field.w-field.offset*2, field.h-field.offset*2);
     push();
     translate(0, field.h);
     drawStroke(field.offset, 0, field.w-field.offset*2, infoField.h-field.offset);
-    translate(infoField.w - 40, infoField.h - 40);
-    noStroke();
-    fill(255)
-    textSize(15);
-    text(`${frame.count}/${frame.max}`, 0, 0);
     pop();
-    push();
-    translate(100, field.h + 80);
-    noStroke();
-    fill(255)
-    textSize(15);
-    let dist = 190;
-    text(`density`, 60, -20);
-    text(`${params.density}/500`, 120, 50);
-    text(`infectionRate`, dist + 100, -20);
-    text(`${params.InfectionRate}/100`, dist + 120, 50);
-    text(`CaseFatalityRate`, dist*2 + 120, -20);
-    text(`${params.CaseFatalityRate}/100`, dist*2 + 120, 50);
-    text(`MoveRate`, dist*3 + 80, -20);
-    text(`${params.MoveRate}/100`, dist*3 + 120, 50);
-    text(`IncubationFrame`, dist*4 + 120, -20);
-    text(`${params.IncubationFrame}/${frame.max}`, dist*4 + 120, 50);
-    text(`OnsetFrame`, dist*5 + 90, -20);
-    text(`${params.OnsetFrame}/${frame.max}`, dist*5 + 120, 50);
-    pop();
+    setText();
 
     if (isReset){
         initPeople();
@@ -146,6 +103,57 @@ function setupData(){
     textAlign(RIGHT);
 }
 
+function createSliders(){
+    let dist = 190;
+    Sliders.densitySlider = createSlider(0, 500, params.density);
+    Sliders.densitySlider.position(100, field.h + 80);
+    Sliders.densitySlider.style('width', '120px');
+    Sliders.InfectionRateSlider = createSlider(0, 100, params.InfectionRate);
+    Sliders.InfectionRateSlider.position(dist + 100, field.h + 80);
+    Sliders.InfectionRateSlider.style('width', '120px');
+    Sliders.CaseFatalityRateSlider = createSlider(0, 100, params.CaseFatalityRate);
+    Sliders.CaseFatalityRateSlider.position(dist*2 + 100, field.h + 80);
+    Sliders.CaseFatalityRateSlider.style('width', '120px');
+    Sliders.MoveRateSlider = createSlider(0, 100, params.MoveRate);
+    Sliders.MoveRateSlider.position(dist*3 + 100, field.h + 80);
+    Sliders.MoveRateSlider.style('width', '120px');
+    Sliders.IncubationFrameSlider = createSlider(0, frame.max, params.IncubationFrame);
+    Sliders.IncubationFrameSlider.position(dist*4 + 100, field.h + 80);
+    Sliders.IncubationFrameSlider.style('width', '120px');
+    Sliders.OnsetFrameSlider = createSlider(0, frame.max, params.OnsetFrame);
+    Sliders.OnsetFrameSlider.position(dist*5 + 100, field.h + 80);
+    Sliders.OnsetFrameSlider.style('width', '120px');
+}
+
+function setText(){
+    push();
+    translate(infoField.w - 40, field.h + infoField.h - 40);
+    noStroke();
+    fill(255)
+    textSize(15);
+    text(`${frame.count}/${frame.max}`, 0, 0);
+    pop();
+    push();
+    translate(100, field.h + 80);
+    noStroke();
+    fill(255)
+    textSize(15);
+    let dist = 190;
+    text(`density`, 60, -20);
+    text(`${params.density}/500`, 120, 50);
+    text(`infectionRate`, dist + 100, -20);
+    text(`${params.InfectionRate}/100`, dist + 120, 50);
+    text(`CaseFatalityRate`, dist*2 + 120, -20);
+    text(`${params.CaseFatalityRate}/100`, dist*2 + 120, 50);
+    text(`MoveRate`, dist*3 + 80, -20);
+    text(`${params.MoveRate}/100`, dist*3 + 120, 50);
+    text(`IncubationFrame`, dist*4 + 120, -20);
+    text(`${params.IncubationFrame}/${frame.max}`, dist*4 + 120, 50);
+    text(`OnsetFrame`, dist*5 + 90, -20);
+    text(`${params.OnsetFrame}/${frame.max}`, dist*5 + 120, 50);
+    pop();
+}
+
 function initPeople(){
     // 重ならないようにrandomに配置する
     people = [];
@@ -179,6 +187,7 @@ function initPeople(){
 }
 
 function drawStroke(x, y, w, h){
+    strokeWeight(3);
     fill(0, 0)
     stroke(150)
     rect(x, y, w, h);
@@ -341,6 +350,7 @@ class Person{
     }
 
     display() {
+        strokeWeight(3);
         fill(this.c);
         stroke(this.sc);
         ellipse(this.location.x, this.location.y, this.r, this.r);
