@@ -24,7 +24,9 @@ let params = {
     CaseFatalityRate: 50, //致死率
     MoveRate: 40, //移動率
     IncubationFrame: 150, //潜伏期間
-    OnsetFrame: 300 //発症期間
+    IncubationFrameCopy: 150,
+    OnsetFrame: 300, //発症期間
+    OnsetFrameCopy: 300
 }
 let Sliders = {
     densitySlider: {},
@@ -58,6 +60,7 @@ function draw() {
     drawStroke(field.offset, 0, field.w-field.offset*2, infoField.h-field.offset);
     pop();
     setText();
+    getSliderVal();
 
     if (isReset){
         initPeople();
@@ -67,7 +70,7 @@ function draw() {
     for(let i = 0; i < people.length; i++){
         people[i].update();
         people[i].bounce(field);
-        people[i].updateFlag(params.IncubationFrame, params.OnsetFrame);
+        people[i].updateFlag(params.IncubationFrameCopy, params.OnsetFrameCopy);
         for(let j = 0; j < people.length; j++){
             if (j == i){
                 continue;
@@ -125,6 +128,15 @@ function createSliders(){
     Sliders.OnsetFrameSlider.style('width', '120px');
 }
 
+function getSliderVal(){
+    params.density = Sliders.densitySlider.value();
+    params.InfectionRate = Sliders.InfectionRateSlider.value();
+    params.CaseFatalityRate = Sliders.CaseFatalityRateSlider.value();
+    params.MoveRate = Sliders.MoveRateSlider.value();
+    params.IncubationFrame = Sliders.IncubationFrameSlider.value();
+    params.OnsetFrame = Sliders.OnsetFrameSlider.value();
+}
+
 function setText(){
     push();
     translate(infoField.w - 40, field.h + infoField.h - 40);
@@ -155,6 +167,8 @@ function setText(){
 }
 
 function initPeople(){
+    params.IncubationFrameCopy = params.IncubationFrame;
+    params.OnsetFrameCopy= params.OnsetFrame;
     // 重ならないようにrandomに配置する
     people = [];
     locs = [];
@@ -263,12 +277,11 @@ class Person{
         };
         this.f = 0;
         this.flag = {
-            isStop: this.getRate(moveRate),
+            isStop: !this.getRate(moveRate),
             isInfection: false,
             isDead: false,
             isAntiBody: false
         }
-        console.log(this.flag.isStop)
     }
 
     setParams(p){
