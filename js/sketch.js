@@ -7,7 +7,6 @@
 let people = [];
 let locs = [];
 let r = 20;
-let density = 200;
 let maxDensity = 500;
 let field;
 let infoField;
@@ -21,6 +20,7 @@ let frame = {
     max:1000
 };
 let params = {
+    density: 200,
     InfectionRate: 50, //感染率
     CaseFatalityRate: 50, //致死率
     MoveRate: 40, //移動率
@@ -48,7 +48,12 @@ function draw() {
     drawStroke(field.offset, field.offset, field.w-field.offset*2, field.h-field.offset*2);
     push();
     translate(0, field.h);
-    drawStroke(field.offset, 0, field.w-field.offset*2, infoField.h-field.offset)
+    drawStroke(field.offset, 0, field.w-field.offset*2, infoField.h-field.offset);
+    translate(infoField.w - 40, infoField.h - 40);
+    noStroke();
+    fill(255)
+    textSize(15);
+    text(`${frame.count}/${frame.max}`, 0, 0);
     pop();
 
     if (isReset){
@@ -92,6 +97,7 @@ function draw() {
 function setupData(){
     infoField = {w: windowWidth, h:200}
     field = {w: windowWidth, h:windowHeight-infoField.h, offset:10}
+    textAlign(RIGHT);
 }
 
 function initPeople(){
@@ -99,7 +105,7 @@ function initPeople(){
     people = [];
     locs = [];
     let isOk = true;
-    for(let i = 0; i < density; i++){
+    for(let i = 0; i < params.density; i++){
         let loc = createVector(
             random(field.offset + r*2, field.w - r*2),random(field.offset + r*2, field.h - r*2)
         );
@@ -135,11 +141,11 @@ function drawStroke(x, y, w, h){
 function setButtons(actionButton, restartButton){
     actionButton = createButton('pause');
     actionButton.id('actionButton');
-    actionButton.position(field.w - 200, field.h + field.offset);
+    actionButton.position(field.w - 200, field.h + field.offset * 3);
     actionButton.mousePressed(()=>onActionButtonPressed());
     restartButton = createButton('restart');
     restartButton.id('restartButton');
-    restartButton.position(field.w - 200, field.h + field.offset * 5);
+    restartButton.position(field.w - 200, field.h + field.offset * 7);
     restartButton.mousePressed(()=>onRestartButtonPressed(isReset));
 }
 
@@ -188,7 +194,7 @@ class Person{
             incubation: color(255, 0, 0),
             infect: color(255, 0, 0),
             anti: color(0, 0, 255),
-            dead: color(100, 100, 100)
+            dead: color(70, 70, 70)
         }
         this.c = this.colors.normal;
         this.sc = this.colors.normal;
