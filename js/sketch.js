@@ -270,12 +270,6 @@ class Person{
 
     bounce(f){
         var offset = (f.offset + this.r * 0.5) * 1.1;
-        //if((this.location.x >= f.w - offset) || (this.location.x <= offset)){
-        //  this.velocity.x *= -1;
-        //}
-        //if((this.location.y >= f.h - offset) || (this.location.y <= offset)){
-        //  this.velocity.y *= -1;
-        //}
         if(this.location.x >= f.w - offset){
             this.location.x -= 1;
             this.velocity.x *= -1;
