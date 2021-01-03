@@ -340,7 +340,6 @@ class Person{
 
     infect(incuEnd){
         this.flag.isInfection = true;
-        this.f = incuEnd;
     }
 
     update(){
@@ -364,7 +363,7 @@ class Person{
             // 感染
             this.setColor(this.colors.infect, this.colors.infect)
         }
-        if (this.f > deadLine){
+        if (this.f > (incuEnd + deadLine)){
             if (this.getRate(this.params.CaseFatalityRate)){
                 // 死
                 this.setColor(this.colors.dead, this.colors.dead)
